@@ -33,6 +33,7 @@ El sistema está compuesto por:
 ##  Ejecución del Proyecto
 
 ### Levantar el sistema
+```md
 ```bash
 docker compose up --build
 ![Ejecucion](docs/docker1.png)
