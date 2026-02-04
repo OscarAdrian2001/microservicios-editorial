@@ -1,0 +1,93 @@
+version: "3.9"
+
+services:
+
+  # =========================
+  # Authors Database
+  # =========================
+  db-authors:
+    image: mysql:8.0
+    container_name: db-authors
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: oscar
+      MYSQL_DATABASE: authors_db
+    ports:
+      - "3310:3306"
+    volumes:
+      - db_authors_data:/var/lib/mysql
+    networks:
+      - editorial-network
+
+  # =========================
+  # Publications Database
+  # =========================
+  db-publications:
+    image: mysql:8.0
+    container_name: db-publications
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: oscar
+      MYSQL_DATABASE: publications_db
+    ports:
+      - "3311:3306"
+    volumes:
+      - db_publications_data:/var/lib/mysql
+    networks:
+      - editorial-network
+
+  # =========================
+  # Authors Service
+  # =========================
+  authors-service:
+    build: ./authors-service
+    container_name: authors-service
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      DB_HOST: db-authors
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: oscar
+      DB_NAME: authors_db
+    depends_on:
+      - db-authors
+    networks:
+      - editorial-network
+
+  # =========================
+  # Publications Service
+  # =========================
+  publications-service:
+    build: ./publications-service
+    container_name: publications-service
+    restart: always
+    ports:
+      - "3002:3002"
+    environment:
+      DB_HOST: db-publications
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: oscar
+      DB_NAME: publications_db
+      AUTHORS_SERVICE_URL: http://authors-service:3001/api/authors
+    depends_on:
+      - db-publications
+      - authors-service
+    networks:
+      - editorial-network
+
+# =========================
+# Volumes
+# =========================
+volumes:
+  db_authors_data:
+  db_publications_data:
+
+# =========================
+# Network
+# =========================
+networks:
+  editorial-network:
+    driver: bridge
