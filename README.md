@@ -38,6 +38,10 @@ docker compose up --build
 ![Ejecucion](docs/docker1.png)
 ![Ejecucion](docs/docker2.png)
 
+### Vemos en Docker nuestros servicios y las BD conectadas
+![Docker](docs/image.png)
+
+
 ### Crear autor
 ![Crear autor](docs/crearAutor.png)
 
